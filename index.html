@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LVI Ventures LLC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #1a0a0a;
+      --border: #3a1a1a;
+      --red: #8b1a1a;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --text: #f0e6d3;
+      --text-dim: #b89a7a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'IM Fell English', serif;
+      font-size: 22px;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--text-dim); font-style: italic; font-size: 14px; margin-left: 8px; }
+
+    .nav-links { display: flex; gap: 36px; }
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 10% 50%, rgba(139,26,26,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 90% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+    }
+
+    .hero-line-top {
+      position: absolute;
+      top: 120px;
+      left: 80px;
+      right: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.4;
+    }
+
+    .hero-line-bottom {
+      position: absolute;
+      bottom: 80px;
+      left: 80px;
+      right: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      opacity: 0.4;
+    }
+
+    .hero-eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(52px, 8vw, 96px);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--text);
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 .gold { color: var(--gold); }
+
+    .hero-subtitle {
+      font-size: clamp(14px, 2vw, 18px);
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .hero-desc {
+      max-width: 560px;
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--text-dim);
+      position: relative;
+      font-style: italic;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+
+    .hero-scroll::after {
+      content: '';
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, var(--gold), transparent);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 0 80px;
+      margin: 0;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-diamond {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    /* PRODUCTS SECTION */
+    .products {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--text-dim);
+      font-style: italic;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Product Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 32px;
+    }
+
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      position: relative;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), var(--gold));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .product-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+    .product-card:hover::before { opacity: 1; }
+
+    .product-card-image {
+      width: 100%;
+      height: 220px;
+      background: linear-gradient(135deg, #1a0a0a 0%, #0d0d0d 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 80% at 20% 50%, rgba(139,26,26,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 80% at 80% 50%, rgba(201,168,76,0.1) 0%, transparent 60%);
+    }
+
+    .product-logo {
+      font-family: 'IM Fell English', serif;
+      font-size: 48px;
+      color: var(--gold);
+      position: relative;
+      z-index: 1;
+    }
+
+    .product-card-body { padding: 28px 32px 32px; }
+
+    .product-tag {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 3px 10px;
+      margin-bottom: 14px;
+    }
+
+    .product-name {
+      font-family: 'IM Fell English', serif;
+      font-size: 28px;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .product-desc {
+      font-size: 16px;
+      color: var(--text-dim);
+      line-height: 1.65;
+      font-style: italic;
+      margin-bottom: 24px;
+    }
+
+    .product-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      transition: gap 0.3s;
+    }
+
+    .product-card:hover .product-cta { gap: 16px; }
+
+    .product-cta::after {
+      content: '→';
+      font-size: 16px;
+    }
+
+    /* COMING SOON CARD */
+    .product-card.coming-soon {
+      opacity: 0.5;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .product-card.coming-soon .product-tag {
+      color: var(--text-dim);
+      border-color: rgba(184,154,122,0.3);
+    }
+
+    /* ABOUT SECTION */
+    .about {
+      padding: 100px 48px;
+      border-top: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about::before {
+      content: '';
+      position: absolute;
+      right: -200px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,26,26,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .about-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-left .section-eyebrow { text-align: left; }
+    .about-left .section-title { text-align: left; font-size: clamp(32px, 4vw, 48px); }
+
+    .about-text {
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .stat {
+      border-left: 2px solid var(--gold);
+      padding-left: 16px;
+    }
+
+    .stat-number {
+      font-family: 'IM Fell English', serif;
+      font-size: 36px;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .about-right {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .value-item {
+      padding: 24px 28px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      background: var(--surface);
+      transition: border-left-color 0.3s;
+    }
+
+    .value-item:hover { border-left-color: var(--gold); }
+
+    .value-title {
+      font-family: 'IM Fell English', serif;
+      font-size: 20px;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .value-desc {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .footer-logo {
+      font-family: 'IM Fell English', serif;
+      font-size: 20px;
+      color: var(--gold);
+    }
+
+    .footer-links { display: flex; gap: 32px; flex-wrap: wrap; }
+    .footer-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--text-dim);
+      opacity: 0.6;
+    }
+
+    /* Fade in animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.25s; }
+    .fade-in:nth-child(3) { animation-delay: 0.4s; }
+    .fade-in:nth-child(4) { animation-delay: 0.55s; }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 24px 80px; }
+      .products { padding: 60px 24px; }
+      .about { padding: 60px 24px; }
+      .about-inner { grid-template-columns: 1fr; gap: 48px; }
+      footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+      .divider { padding: 0 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">LVI Ventures <span>LLC</span></a>
+    <div class="nav-links">
+      <a href="#products">Products</a>
+      <a href="#about">About</a>
+      <a href="mailto:support@lviventures.com">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-line-top"></div>
+    <div class="hero-line-bottom"></div>
+    <p class="hero-eyebrow fade-in">LVI Ventures LLC</p>
+    <h1 class="fade-in">Building <span class="gold">Bold</span><br/>Products</h1>
+    <p class="hero-subtitle fade-in">Technology · Confidence · Innovation</p>
+    <p class="hero-desc fade-in">We create software products that help people become the best version of themselves. Bold ideas. Relentless execution.</p>
+    <div class="hero-scroll">Scroll</div>
+  </section>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <section class="products" id="products">
+    <div class="section-header">
+      <p class="section-eyebrow">Our Portfolio</p>
+      <h2 class="section-title">Products</h2>
+      <p class="section-desc">Innovative software built to make a real difference in people's lives.</p>
+    </div>
+
+    <div class="products-grid">
+
+      <!-- Alpha's -->
+      <a href="alphas.html" class="product-card">
+        <div class="product-card-image">
+          <div class="product-logo">A</div>
+        </div>
+        <div class="product-card-body">
+          <span class="product-tag">Live on App Store</span>
+          <h3 class="product-name">Alpha's</h3>
+          <p class="product-desc">An AI-powered dating and confidence coaching app for men. Real advice, real results. Stop guessing — start winning.</p>
+          <span class="product-cta">Learn More</span>
+        </div>
+      </a>
+
+      <!-- Coming Soon placeholder -->
+      <div class="product-card coming-soon">
+        <div class="product-card-image">
+          <div class="product-logo" style="color: var(--text-dim); font-size: 36px;">?</div>
+        </div>
+        <div class="product-card-body">
+          <span class="product-tag">Coming Soon</span>
+          <h3 class="product-name" style="color: var(--text-dim);">Next Product</h3>
+          <p class="product-desc">Something new is in the works. Stay tuned.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <p class="section-eyebrow">Who We Are</p>
+        <h2 class="section-title">Built by Founders,<br/>For Everyone</h2>
+        <p class="about-text">LVI Ventures LLC is a New Jersey based technology company founded by four entrepreneurs with a shared mission — to build software products that genuinely improve people's lives.</p>
+        <p class="about-text">We move fast, think bold, and never settle for average. Every product we build is rooted in real experience and designed to deliver real results.</p>
+        <div class="about-stats">
+          <div class="stat">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Co-Founders</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">2026</div>
+            <div class="stat-label">Founded</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">1</div>
+            <div class="stat-label">Live Product</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">NJ</div>
+            <div class="stat-label">Based</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-right">
+        <div class="value-item">
+          <div class="value-title">Authenticity</div>
+          <div class="value-desc">We build products rooted in real experience. No fluff, no filler — just honest, effective solutions.</div>
+        </div>
+        <div class="value-item">
+          <div class="value-title">Boldness</div>
+          <div class="value-desc">We tackle problems others won't touch. If it matters, we build it — regardless of how unconventional it may seem.</div>
+        </div>
+        <div class="value-item">
+          <div class="value-title">Excellence</div>
+          <div class="value-desc">Every detail matters. From the first line of code to the final user experience, we obsess over quality.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">LVI Ventures LLC</div>
+    <div class="footer-links">
+      <a href="#products">Products</a>
+      <a href="#about">About</a>
+      <a href="alphas.html">Alpha's</a>
+      <a href="https://alphasapp.github.io/legal/privacy.html" target="_blank">Privacy Policy</a>
+      <a href="mailto:support@lviventures.com">Contact</a>
+    </div>
+    <div class="footer-copy">© 2026 LVI Ventures LLC. All rights reserved.</div>
+  </footer>
+
+</body>
+</html>

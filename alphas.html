@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alpha's — AI Dating & Confidence Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #1a0a0a;
+      --border: #3a1a1a;
+      --red: #8b1a1a;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --text: #f0e6d3;
+      --text-dim: #b89a7a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'IM Fell English', serif;
+      font-size: 22px;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+    .nav-back:hover { color: var(--gold); }
+    .nav-back::before { content: '←'; font-size: 16px; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 0% 50%, rgba(139,26,26,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 100% 20%, rgba(201,168,76,0.08) 0%, transparent 60%);
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-left {}
+
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(64px, 10vw, 112px);
+      font-weight: 400;
+      color: var(--gold);
+      line-height: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .hero-title-sub {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(18px, 3vw, 28px);
+      font-weight: 400;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 32px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-desc {
+      font-size: 18px;
+      line-height: 1.8;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+      max-width: 480px;
+    }
+
+    .hero-desc strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .cta-group { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: var(--red);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover { background: #a02020; transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Phone mockup area */
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .phone-mockup {
+      width: 280px;
+      height: 560px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 36px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.1);
+    }
+
+    .phone-mockup::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 28px;
+      background: var(--bg);
+      border-radius: 0 0 20px 20px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #1a0a0a 0%, #0d0d0d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px 20px;
+      gap: 12px;
+    }
+
+    .phone-placeholder {
+      width: 100%;
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .phone-placeholder.tall { height: 220px; }
+    .phone-placeholder.short { height: 80px; }
+
+    /* Replace placeholders with real screenshots */
+    .screenshot-container {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0; left: 0;
+    }
+
+    /* Glow around phone */
+    .phone-glow {
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(ellipse at center, rgba(139,26,26,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 0 80px;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-diamond { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+    /* SCREENSHOTS SECTION */
+    .screenshots {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .screenshots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .screenshot-frame {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 9/19.5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .screenshot-frame:hover { border-color: var(--gold); transform: translateY(-4px); }
+
+    /* TO ADD REAL SCREENSHOTS:
+       Replace the .screenshot-placeholder div inside each .screenshot-frame
+       with: <img src="screenshot1.jpg" alt="Screenshot" style="width:100%;height:100%;object-fit:cover;">
+    */
+    .screenshot-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px;
+      text-align: center;
+      background: linear-gradient(160deg, #1a0a0a, #0d0d0d);
+    }
+
+    .screenshot-placeholder .icon {
+      font-family: 'IM Fell English', serif;
+      font-size: 32px;
+      color: var(--gold);
+      opacity: 0.4;
+    }
+
+    .screenshot-placeholder .label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      opacity: 0.5;
+    }
+
+    /* FEATURES */
+    .features {
+      padding: 100px 48px;
+      border-top: 1px solid var(--border);
+      position: relative;
+    }
+
+    .features::before {
+      content: '';
+      position: absolute;
+      left: -200px; top: 50%;
+      transform: translateY(-50%);
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .features-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+      border: 1px solid var(--border);
+    }
+
+    .feature-item {
+      padding: 40px 36px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+
+    .feature-item:hover { background: #1f0c0c; }
+
+    .feature-number {
+      font-family: 'IM Fell English', serif;
+      font-size: 48px;
+      color: var(--red);
+      opacity: 0.4;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .feature-name {
+      font-family: 'IM Fell English', serif;
+      font-size: 24px;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .feature-desc {
+      font-size: 16px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* DESCRIPTION */
+    .description {
+      padding: 100px 48px;
+      border-top: 1px solid var(--border);
+    }
+
+    .description-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .description-text {
+      font-size: 20px;
+      line-height: 1.9;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+    }
+
+    .description-text strong { color: var(--text); }
+
+    .description-quote {
+      font-family: 'IM Fell English', serif;
+      font-size: 28px;
+      font-style: italic;
+      color: var(--gold);
+      margin: 48px 0;
+      padding: 32px 48px;
+      border-top: 1px solid rgba(201,168,76,0.3);
+      border-bottom: 1px solid rgba(201,168,76,0.3);
+      line-height: 1.5;
+    }
+
+    /* CTA SECTION */
+    .cta-section {
+      padding: 100px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(139,26,26,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: 'IM Fell English', serif;
+      font-size: clamp(40px, 6vw, 72px);
+      color: var(--text);
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .cta-title span { color: var(--gold); }
+
+    .cta-subtitle {
+      font-size: 18px;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .app-store-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 36px;
+      background: var(--red);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .app-store-btn:hover { background: #a02020; transform: translateY(-2px); }
+
+    .app-store-btn .apple-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .app-store-btn .btn-text { display: flex; flex-direction: column; text-align: left; }
+    .app-store-btn .btn-text small { font-size: 11px; letter-spacing: 0.1em; opacity: 0.7; }
+    .app-store-btn .btn-text strong { font-size: 18px; font-weight: 600; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .footer-logo { font-family: 'IM Fell English', serif; font-size: 20px; color: var(--gold); }
+    .footer-links { display: flex; gap: 32px; flex-wrap: wrap; }
+    .footer-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; letter-spacing: 0.05em; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 13px; color: var(--text-dim); opacity: 0.6; }
+
+    .fade-in { opacity: 0; transform: translateY(24px); animation: fadeIn 0.8s ease forwards; }
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.25s; }
+    .fade-in:nth-child(3) { animation-delay: 0.4s; }
+    .fade-in:nth-child(4) { animation-delay: 0.55s; }
+    .fade-in:nth-child(5) { animation-delay: 0.7s; }
+
+    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .hero { padding: 100px 24px 60px; }
+      .screenshots { padding: 60px 24px; }
+      .features { padding: 60px 24px; }
+      .description { padding: 60px 24px; }
+      .cta-section { padding: 60px 24px; }
+      footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+      .divider { padding: 0 24px; }
+      .description-quote { padding: 24px; font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">LVI Ventures</a>
+    <a href="index.html" class="nav-back">Back to Products</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <p class="hero-eyebrow fade-in">LVI Ventures LLC — Product</p>
+        <h1 class="hero-title fade-in">Alpha's</h1>
+        <p class="hero-title-sub fade-in">AI Dating & Confidence Coach</p>
+        <p class="hero-desc fade-in">Most apps give you scripts. <strong>Alpha's gives you understanding.</strong> We don't just tell you what to say — we teach you why it works. When you understand the psychology behind attraction and confidence, you stop depending on lines and start becoming the man who doesn't need them.</p>
+        <div class="cta-group fade-in">
+          <a href="https://apps.apple.com/app/id6761196900" class="btn-primary" target="_blank">
+            Download on App Store
+          </a>
+          <a href="#features" class="btn-secondary">Learn More</a>
+        </div>
+      </div>
+      <div class="hero-right fade-in">
+        <div class="phone-glow"></div>
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <!-- REPLACE WITH SCREENSHOT:
+                 <img src="screenshot1.jpg" class="screenshot-container" alt="App Screenshot">
+            -->
+            <div class="phone-placeholder tall">
+              <span style="font-family:'IM Fell English',serif;font-size:32px;color:var(--gold);opacity:0.3;">A</span>
+              <span style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);opacity:0.4;">Add Screenshot Here</span>
+            </div>
+            <div class="phone-placeholder short">
+              <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);opacity:0.4;">Chat Interface</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- SCREENSHOTS -->
+  <section class="screenshots">
+    <div class="section-header">
+      <p class="section-eyebrow">App Store</p>
+      <h2 class="section-title">See It In Action</h2>
+    </div>
+    <div class="screenshots-grid">
+      <!-- SCREENSHOT 1
+           To replace: remove the .screenshot-placeholder div and add:
+           <img src="screenshot1.jpg" alt="Screenshot 1" style="width:100%;height:100%;object-fit:cover;">
+      -->
+      <div class="screenshot-frame">
+        <div class="screenshot-placeholder">
+          <div class="icon">①</div>
+          <div class="label">Screenshot 1</div>
+        </div>
+      </div>
+      <!-- SCREENSHOT 2 -->
+      <div class="screenshot-frame">
+        <div class="screenshot-placeholder">
+          <div class="icon">②</div>
+          <div class="label">Screenshot 2</div>
+        </div>
+      </div>
+      <!-- SCREENSHOT 3 -->
+      <div class="screenshot-frame">
+        <div class="screenshot-placeholder">
+          <div class="icon">③</div>
+          <div class="label">Screenshot 3</div>
+        </div>
+      </div>
+      <!-- SCREENSHOT 4 -->
+      <div class="screenshot-frame">
+        <div class="screenshot-placeholder">
+          <div class="icon">④</div>
+          <div class="label">Screenshot 4</div>
+        </div>
+      </div>
+      <!-- SCREENSHOT 5 -->
+      <div class="screenshot-frame">
+        <div class="screenshot-placeholder">
+          <div class="icon">⑤</div>
+          <div class="label">Screenshot 5</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="features-inner">
+      <div class="section-header">
+        <p class="section-eyebrow">What's Inside</p>
+        <h2 class="section-title">Three Powerful Features</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-number">01</div>
+          <div class="feature-name">Alpha's Algorithm</div>
+          <div class="feature-desc">Your AI advisor for dating, mindset, and confidence. Ask anything, analyze text conversations, upload your photos for feedback. Direct, strategic guidance that actually applies to real life.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-number">02</div>
+          <div class="feature-name">Alpha's Advisors</div>
+          <div class="feature-desc">Real coaches with real experience. Book 1-on-1 sessions with our advisors who have lived through the journey and know exactly what it takes to level up. Coming soon.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-number">03</div>
+          <div class="feature-name">Alpha's Arena</div>
+          <div class="feature-desc">Compete with other users and climb the leaderboard. Track your progress, see where you rank, and push yourself to keep growing. The grind is rewarded here.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <section class="description">
+    <div class="description-inner">
+      <p class="section-eyebrow">Our Philosophy</p>
+      <h2 class="section-title" style="margin-bottom:40px;">More Than Just Advice</h2>
+      <p class="description-text">You already know what you want. <strong>Alpha's Algorithm helps you get there.</strong></p>
+      <p class="description-text">Most dating apps leave you swiping. Most advice apps give you scripts. Alpha's is different — because we don't just tell you what to say, we teach you <strong>why it works.</strong></p>
+      <div class="description-quote">"Stop chasing and start attracting."</div>
+      <p class="description-text">When you understand the psychology behind attraction and confidence, you stop depending on lines and start becoming the man who doesn't need them. That's the Alpha's difference.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2 class="cta-title">The man you're becoming<br/><span>starts here.</span></h2>
+    <p class="cta-subtitle">Download Alpha's today. Free to start.</p>
+    <div class="cta-buttons">
+      <a href="https://apps.apple.com/app/id6761196900" class="app-store-btn" target="_blank">
+        <span class="apple-icon">&#63743;</span>
+        <div class="btn-text">
+          <small>Download on the</small>
+          <strong>App Store</strong>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Alpha's</div>
+    <div class="footer-links">
+      <a href="index.html">LVI Ventures</a>
+      <a href="https://alphasapp.github.io/legal/privacy.html" target="_blank">Privacy Policy</a>
+      <a href="mailto:support@lviventures.com">Support</a>
+    </div>
+    <div class="footer-copy">© 2026 LVI Ventures LLC. All rights reserved.</div>
+  </footer>
+
+</body>
+</html>
